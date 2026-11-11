@@ -66,8 +66,6 @@ public sealed class AdmissionDbContext(DbContextOptions<AdmissionDbContext> opti
                     "expires_at IS NOT NULL OR status IN ('WAITLISTED', 'CANCELLED')");
                 table.HasCheckConstraint("ck_holds_academic_year", "academic_year BETWEEN 2020 AND 2100");
                 table.HasCheckConstraint("ck_holds_age_range", "age IS NULL OR (age >= 3 AND age <= 25)");
-                table.HasCheckConstraint("ck_holds_confirmed_has_info",
-                    "status != 'CONFIRMED' OR (student_name IS NOT NULL AND age IS NOT NULL)");
             });
             entity.HasKey(h => h.Id);
             entity.Property(h => h.QueueNumber).UseIdentityAlwaysColumn();

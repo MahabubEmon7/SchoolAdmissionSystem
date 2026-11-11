@@ -139,8 +139,8 @@ export function useConfirmHold() {
   const { studentId } = useStudentId();
   const refresh = useRefreshAdmissions();
   return useMutation({
-    mutationFn: ({ holdId, studentName, age }: { holdId: string; studentName: string; age: number }) =>
-      api.confirmHold(holdId, studentId, { studentName, age }),
+    mutationFn: ({ holdId, studentName, age }: { holdId: string; studentName?: string; age?: number }) =>
+      api.confirmHold(holdId, studentId, studentName || age ? { studentName, age } : undefined),
     onSuccess: () => toast.success('Payment complete. Your admission is officially confirmed!'),
     onError: notifyError,
     onSettled: refresh,

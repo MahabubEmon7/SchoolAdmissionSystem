@@ -55,25 +55,9 @@ export function ApplicationCard({ hold }: { hold: StudentHold }) {
         {isWaitlisted && <WaitlistNotice position={hold.waitlistPosition} />}
 
         {status === 'CONFIRMED' && (
-          <div className="space-y-2">
-            <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 text-xs text-emerald-300 flex items-center gap-2">
-              <Icon name="check" className="size-4 shrink-0 text-emerald-400" aria-hidden="true" />
-              <span>Admission fee confirmed. Your seat is officially secured.</span>
-            </div>
-            {(hold.studentName || hold.age) && (
-              <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2.5 text-xs text-slate-300 flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] uppercase text-slate-500 font-medium block">Admitted Student</span>
-                  <span className="font-semibold text-white">{hold.studentName ?? 'Admitted Student'}</span>
-                </div>
-                {hold.age && (
-                  <div className="text-right">
-                    <span className="text-[10px] uppercase text-slate-500 font-medium block">Age</span>
-                    <span className="font-medium text-slate-300">{hold.age} years old</span>
-                  </div>
-                )}
-              </div>
-            )}
+          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 text-xs text-emerald-300 flex items-center gap-2">
+            <Icon name="check" className="size-4 shrink-0 text-emerald-400" aria-hidden="true" />
+            <span>Admission fee confirmed. Your seat is officially secured.</span>
           </div>
         )}
         {status === 'EXPIRED' && (
@@ -119,14 +103,12 @@ export function ApplicationCard({ hold }: { hold: StudentHold }) {
         open={dialog === 'pay'}
         classTitle={hold.className}
         academicYear={hold.academicYear}
-        initialName={hold.studentName}
-        initialAge={hold.age}
         secondsLeft={secondsLeft}
         paying={confirm.isPending}
         onClose={close}
-        onComplete={(info) =>
+        onComplete={() =>
           confirm.mutate(
-            { holdId: hold.holdId, studentName: info.studentName, age: info.age },
+            { holdId: hold.holdId },
             { onSettled: close },
           )
         }

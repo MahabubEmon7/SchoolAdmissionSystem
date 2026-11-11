@@ -163,8 +163,6 @@ namespace Admission.Api.Data.Migrations
 
                             t.HasCheckConstraint("ck_holds_age_range", "age IS NULL OR (age >= 3 AND age <= 25)");
 
-                            t.HasCheckConstraint("ck_holds_confirmed_has_info", "status != 'CONFIRMED' OR (student_name IS NOT NULL AND age IS NOT NULL)");
-
                             t.HasCheckConstraint("ck_holds_deadline", "expires_at IS NOT NULL OR status IN ('WAITLISTED', 'CANCELLED')");
 
                             t.HasCheckConstraint("ck_holds_status", "status IN ('WAITLISTED', 'HELD', 'CONFIRMED', 'EXPIRED', 'CANCELLED')");

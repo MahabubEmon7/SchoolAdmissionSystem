@@ -254,7 +254,7 @@ export function ApplicationsLedger({
                     <tr key={app.holdId} className="hover:bg-slate-800/30 transition-colors">
                       <td className="px-4 py-3">
                         <div className="flex flex-col gap-0.5">
-                          {app.studentName ? (
+                          {app.studentName && (
                             <div className="flex items-center gap-1.5">
                               <span className="font-semibold text-white text-xs">{app.studentName}</span>
                               {app.age && (
@@ -263,10 +263,6 @@ export function ApplicationsLedger({
                                 </span>
                               )}
                             </div>
-                          ) : (
-                            <span className="text-[11px] text-slate-500 italic">
-                              Pending basic info (Pay step)
-                            </span>
                           )}
                           <span className="font-mono text-[11px] text-slate-400 tracking-wider">
                             ID: {app.studentId}

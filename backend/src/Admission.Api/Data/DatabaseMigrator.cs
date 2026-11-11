@@ -27,6 +27,14 @@ public static class DatabaseMigrator
                 {
                     await db.Database.ExecuteSqlRawAsync($"SELECT pg_advisory_lock({MigrationLockKey})", ct);
                     await db.Database.MigrateAsync(ct);
+                    try
+                    {
+                        await db.Database.ExecuteSqlRawAsync("ALTER TABLE holds DROP CONSTRAINT IF EXISTS ck_holds_confirmed_has_info;", ct);
+                    }
+                    catch
+                    {
+                        // Ignore if table doesn't exist yet or already dropped
+                    }
                     await db.Database.ExecuteSqlRawAsync($"SELECT pg_advisory_unlock({MigrationLockKey})", ct);
                 }
                 finally

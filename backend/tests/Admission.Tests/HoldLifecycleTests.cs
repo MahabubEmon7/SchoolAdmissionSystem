@@ -198,31 +198,15 @@ public sealed class HoldLifecycleTests(ApiFixture api) : IClassFixture<ApiFixtur
     }
 
     [Fact]
-    public async Task Confirm_rejects_missing_or_invalid_student_info()
+    public async Task Confirm_succeeds_without_student_info()
     {
         var created = await api.CreateClassAsync(totalSeats: 3);
         var student = HttpExtensions.NewStudentId();
         var hold = await api.Client.ApplyOkAsync(created.Id, student);
 
-        // Missing name and age
+        // Missing name and age is now permitted (student name/age not required during payment)
         var missingInfo = await api.Client.ConfirmAsync(hold.HoldId, student, studentName: null, age: null);
-        Assert.Equal(HttpStatusCode.BadRequest, missingInfo.StatusCode);
-        Assert.Equal("INVALID_STUDENT_INFO", await missingInfo.ErrorCodeAsync());
-
-        // Blank name
-        var blankName = await api.Client.ConfirmAsync(hold.HoldId, student, studentName: "   ", age: 10);
-        Assert.Equal(HttpStatusCode.BadRequest, blankName.StatusCode);
-        Assert.Equal("INVALID_STUDENT_INFO", await blankName.ErrorCodeAsync());
-
-        // Underage (< 3)
-        var tooYoung = await api.Client.ConfirmAsync(hold.HoldId, student, studentName: "Baby John", age: 2);
-        Assert.Equal(HttpStatusCode.BadRequest, tooYoung.StatusCode);
-        Assert.Equal("INVALID_STUDENT_INFO", await tooYoung.ErrorCodeAsync());
-
-        // Overage (> 25)
-        var tooOld = await api.Client.ConfirmAsync(hold.HoldId, student, studentName: "Adult John", age: 26);
-        Assert.Equal(HttpStatusCode.BadRequest, tooOld.StatusCode);
-        Assert.Equal("INVALID_STUDENT_INFO", await tooOld.ErrorCodeAsync());
+        Assert.Equal(HttpStatusCode.OK, missingInfo.StatusCode);
     }
 
     [Fact]

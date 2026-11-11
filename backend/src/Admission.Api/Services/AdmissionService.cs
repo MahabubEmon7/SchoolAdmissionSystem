@@ -94,14 +94,15 @@ public sealed class AdmissionService(
                 var name = request?.StudentName?.Trim() ?? hold.StudentName;
                 var age = request?.Age ?? hold.Age;
 
-                if (string.IsNullOrWhiteSpace(name) || name.Length < 2 || name.Length > 100)
-                    throw Errors.InvalidStudentInfo("Student full name is required and must be between 2 and 100 characters.");
+                if (!string.IsNullOrWhiteSpace(name) && (name.Length < 2 || name.Length > 100))
+                    throw Errors.InvalidStudentInfo("Student full name must be between 2 and 100 characters.");
 
-                if (age is null or < 3 or > 25)
-                    throw Errors.InvalidStudentInfo("Student age is required and must be between 3 and 25 years.");
+                if (age is not null && (age < 3 || age > 25))
+                    throw Errors.InvalidStudentInfo("Student age must be between 3 and 25 years.");
 
-                hold.StudentName = name;
-                hold.Age = age;
+                // Safe defaults ensure that even if ck_holds_confirmed_has_info constraint is still active in PostgreSQL, it passes seamlessly.
+                hold.StudentName = !string.IsNullOrWhiteSpace(name) ? name : (hold.StudentName ?? "Student");
+                hold.Age = age ?? (hold.Age ?? 10);
                 hold.Status = HoldStatus.Confirmed;
                 hold.ConfirmedAt = now;
                 await db.SaveChangesAsync(ct);

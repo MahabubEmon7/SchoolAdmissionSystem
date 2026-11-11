@@ -87,8 +87,8 @@ export const api = {
   joinWaitlist: (classId: string, studentId: string) =>
     request<CreatedHold>(`/classes/${classId}/waitlist`, { method: 'POST', studentId }),
   myHolds: (studentId: string) => request<StudentHold[]>('/me/holds', { studentId }),
-  confirmHold: (holdId: string, studentId: string, info: { studentName: string; age: number }) =>
-    request<ConfirmedHold>(`/holds/${holdId}/confirm`, { method: 'POST', studentId, body: info }),
+  confirmHold: (holdId: string, studentId: string, info?: { studentName?: string; age?: number }) =>
+    request<ConfirmedHold>(`/holds/${holdId}/confirm`, { method: 'POST', studentId, body: info ?? {} }),
   updateStudentInfo: (holdId: string, studentId: string, info: { studentName: string; age: number }) =>
     request<StudentHold>(`/holds/${holdId}/info`, { method: 'PATCH', studentId, body: info }),
   cancelHold: (holdId: string, studentId: string) =>
@@ -127,9 +127,10 @@ export const api = {
 // already carry a specific, friendly message from the API.
 const FRIENDLY: Record<string, string> = {
   INVALID_STUDENT_ID: 'Invalid ID. Enter your 17-digit Birth Registration Number.',
-  INVALID_STUDENT_INFO: 'Please provide a valid Student Full Name (2–100 characters) and Age (3–25 years).',
-  HOLD_EXPIRED: 'Your seat hold has expired. Please apply again.',
+  INVALID_STUDENT_INFO: 'Invalid student details.',
+  HOLD_EXPIRED: 'Hold expired. Please apply again.',
   FORBIDDEN: 'This application belongs to a different student.',
+  SERVER_ERROR: 'Server could not complete payment. Please try again.',
 };
 
 /** A short message that is safe to show to a student. */
