@@ -26,13 +26,6 @@ public static class AdminEndpoints
             Results.Ok(await service.ArchivePastYearsAsync(cutoffYear, ct)))
             .Produces<ArchivePastYearsResponse>();
 
-        admin.MapPost("/reset", async (AdminService service, CancellationToken ct) =>
-        {
-            await service.ResetDatabaseAsync(ct);
-            return Results.Ok(new { message = "Database reset successfully." });
-        })
-        .Produces(StatusCodes.Status200OK);
-
         admin.MapPost("/seed", async (AdminService service, CancellationToken ct) =>
         {
             var result = await service.SeedDatabaseAsync(ct);

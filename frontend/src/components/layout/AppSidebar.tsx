@@ -7,7 +7,6 @@ import {
   CalendarDays,
   CheckCircle2,
   AlertCircle,
-  Database,
   Building2,
 } from 'lucide-react';
 import { useAppStore, type Tab } from '../../store/useAppStore';
@@ -17,10 +16,9 @@ import { Badge } from '@/components/ui/badge';
 
 interface AppSidebarProps {
   onNavigate?: () => void;
-  onOpenResetDb?: () => void;
 }
 
-export function AppSidebar({ onNavigate, onOpenResetDb }: AppSidebarProps) {
+export function AppSidebar({ onNavigate }: AppSidebarProps) {
   const currentTab = useAppStore((s) => s.tab);
   const setTab = useAppStore((s) => s.setTab);
   const { studentId, isValid } = useStudentId();
@@ -171,7 +169,7 @@ export function AppSidebar({ onNavigate, onOpenResetDb }: AppSidebarProps) {
         </nav>
       </div>
 
-      {/* Footer: Student Identity Status & Quick Database Reset */}
+      {/* Footer: Student Identity Status & Telemetry */}
       <div className="space-y-3 pt-4 border-t border-slate-900">
         {/* Student Session Card */}
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-3 shadow-inner">
@@ -213,23 +211,12 @@ export function AppSidebar({ onNavigate, onOpenResetDb }: AppSidebarProps) {
           )}
         </div>
 
-        {/* System & Database Quick Action */}
+        {/* System Telemetry Status */}
         <div className="flex items-center justify-between px-1 text-[11px] text-slate-500">
           <div className="flex items-center gap-1.5">
             <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
             <span>Telemetry Online</span>
           </div>
-          {onOpenResetDb && (
-            <button
-              type="button"
-              onClick={onOpenResetDb}
-              className="text-slate-400 hover:text-rose-400 transition-colors flex items-center gap-1 text-[11px]"
-              title="Reset Database"
-            >
-              <Database className="size-3" aria-hidden="true" />
-              Reset
-            </button>
-          )}
         </div>
       </div>
     </aside>

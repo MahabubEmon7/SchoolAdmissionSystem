@@ -3,7 +3,6 @@ import { X } from 'lucide-react';
 import { AppSidebar } from './AppSidebar';
 import { DashboardHeader } from './DashboardHeader';
 import { ConnectionBanner } from './ConnectionBanner';
-import { ResetDbDialog } from '../../features/admin/ResetDbDialog';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -11,13 +10,12 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [resetDialogOpen, setResetDialogOpen] = useState(false);
 
   return (
     <div className="flex min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-sky-500/20 selection:text-sky-200">
       {/* Desktop Fixed Sidebar */}
       <div className="hidden md:fixed md:inset-y-0 md:z-40 md:flex md:w-64 md:flex-col">
-        <AppSidebar onOpenResetDb={() => setResetDialogOpen(true)} />
+        <AppSidebar />
       </div>
 
       {/* Mobile Drawer / Backdrop Overlay */}
@@ -41,10 +39,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
             <AppSidebar
               onNavigate={() => setMobileMenuOpen(false)}
-              onOpenResetDb={() => {
-                setMobileMenuOpen(false);
-                setResetDialogOpen(true);
-              }}
             />
           </div>
         </div>
@@ -59,12 +53,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           {children}
         </main>
       </div>
-
-      {/* Global Reset Database Dialog */}
-      <ResetDbDialog
-        open={resetDialogOpen}
-        onClose={() => setResetDialogOpen(false)}
-      />
     </div>
   );
 }

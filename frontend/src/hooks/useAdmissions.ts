@@ -224,18 +224,6 @@ export function useDeleteClass() {
   });
 }
 
-export function useResetDatabase() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: () => api.resetDatabase(),
-    onSuccess: () => {
-      toast.success('Database reset: all classes and applications cleared.');
-      queryClient.invalidateQueries();
-    },
-    onError: notifyError,
-  });
-}
-
 export function useSeedDatabase() {
   const queryClient = useQueryClient();
   return useMutation({

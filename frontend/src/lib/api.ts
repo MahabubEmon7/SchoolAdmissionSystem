@@ -119,7 +119,6 @@ export const api = {
       { method: 'POST' },
     ),
   deleteClass: (classId: string) => request<void>(`/classes/${classId}`, { method: 'DELETE' }),
-  resetDatabase: () => request<{ message: string }>('/admin/reset', { method: 'POST' }),
   seedDatabase: () => request<SeedDatabaseResponse>('/admin/seed', { method: 'POST' }),
 };
 

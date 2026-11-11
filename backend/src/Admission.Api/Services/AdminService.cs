@@ -214,20 +214,6 @@ public sealed class AdminService(AdmissionDbContext db, TimeProvider clock, ISea
             $"Archived previous years (< {cutoff}). Retained only confirmed admitted students; purged {pruned} unconfirmed records.");
     }
 
-    public async Task ResetDatabaseAsync(CancellationToken ct)
-    {
-        await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE holds, classes, academic_sessions CASCADE;", ct);
-        db.Sessions.Add(new AcademicSession
-        {
-            AcademicYear = SchoolClass.DefaultAcademicYear,
-            Title = $"Academic Session {SchoolClass.DefaultAcademicYear}–{SchoolClass.DefaultAcademicYear + 1}",
-            Status = SessionStatus.Active,
-            CreatedAt = clock.UtcNowForDb(),
-        });
-        await db.SaveChangesAsync(ct);
-        await cache.InvalidateAsync([]);
-    }
-
     public async Task<SeedDatabaseResponse> SeedDatabaseAsync(CancellationToken ct)
     {
         var now = clock.UtcNowForDb();
