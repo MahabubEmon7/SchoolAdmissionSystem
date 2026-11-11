@@ -62,6 +62,7 @@ export function StudentIdField() {
 
   return (
     <div className="relative w-44 sm:w-64 md:w-72">
+      <p className="text-xs font-medium text-slate-300"> Birth Registration Number</p>
       <label htmlFor="student-id" className="sr-only">
         Birth Registration Number (17 Digits)
       </label>
