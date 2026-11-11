@@ -1,0 +1,75 @@
+name: school-admission
+
+x-db-credentials: &db-credentials
+  POSTGRES_DB: ${POSTGRES_DB:-admissions}
+  POSTGRES_USER: ${POSTGRES_USER:-admissions}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admissions}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment: *db-credentials
+    volumes:
+      - postgres-data:/var/lib/postgresql/data # survives `docker compose down`
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no"] # cache only; nothing to persist
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build:
+      context: ./backend
+      target: final
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8080}:8080"
+    environment:
+      HOLD_DURATION_SECONDS: ${HOLD_DURATION_SECONDS:-600}
+      DATABASE_CONNECTION_STRING: Host=postgres;Port=5432;Database=${POSTGRES_DB:-admissions};Username=${POSTGRES_USER:-admissions};Password=${POSTGRES_PASSWORD:-admissions};Maximum Pool Size=50
+      REDIS_CONNECTION_STRING: redis:6379
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    environment:
+      # The address the *browser* uses to reach the backend.
+      API_URL: ${API_URL:-http://localhost:8080}
+    depends_on:
+      - backend
+
+  # xUnit suite against a throwaway database on the same PostgreSQL server:
+  #   docker compose --profile test run --rm backend-tests
+  backend-tests:
+    profiles: ["test"]
+    build:
+      context: ./backend
+      target: test
+    environment:
+      TEST_DATABASE_CONNECTION_STRING: Host=postgres;Port=5432;Database=${POSTGRES_DB:-admissions};Username=${POSTGRES_USER:-admissions};Password=${POSTGRES_PASSWORD:-admissions}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
